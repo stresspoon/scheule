@@ -66,7 +66,8 @@ def task_input_page():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.header("해야할 일 입력")
+        st.header("해야 할 일에 대한 내용을 최대한 구체적으로 입력해주세요"")
+        st.subheader("예) 블로그 쓰기 X | <AI 활용 방법> 무료 특강 모집 블로그 쓰기 O")
         
         # 기존 일정 표시 및 수정
         for i in range(len(st.session_state.tasks)):

@@ -2,8 +2,8 @@ import streamlit as st
 from openai import OpenAI
 
 def main():
-    st.set_page_config(page_title="ChatGPT API 일정 정리 앱", page_icon="📅", layout="wide")
-    st.title("ChatGPT API 일정 정리 앱")
+    st.set_page_config(page_title="오늘 하루 일정 정리", page_icon="📅", layout="wide")
+    st.title("오늘 하루 일정 정리")
 
     if 'api_key' not in st.session_state:
         st.session_state.api_key = ''
@@ -49,7 +49,7 @@ def goal_input_page():
         else:
             st.session_state.goal = st.text_input("새로운 목표를 입력하세요:")
     else:
-        st.session_state.goal = st.text_input("목표를 입력하세요:")
+        st.session_state.goal = st.text_input("본인이 이루고자하는 최종 목표에 대해서 구체적으로 작성해주세요:")
     
     st.session_state.importance = st.slider("목표의 중요도를 선택하세요", 1, 10, 5)
     
@@ -66,32 +66,32 @@ def task_input_page():
     col1, col2 = st.columns(2)
 
     with col1:
-        st.header("일정 입력")
+        st.header("해야할 일 입력")
         
         # 기존 일정 표시 및 수정
         for i in range(len(st.session_state.tasks)):
-            st.session_state.tasks[i] = st.text_input(f"일정 {i+1}", value=st.session_state.tasks[i], key=f"existing_task_{i}")
+            st.session_state.tasks[i] = st.text_input(f"해야할 일 {i+1}", value=st.session_state.tasks[i], key=f"existing_task_{i}")
         
         # 새로운 일정 입력 필드 추가
         for i in range(len(st.session_state.tasks), st.session_state.task_count):
-            new_task = st.text_input(f"일정 {i+1}", key=f"new_task_{i}")
+            new_task = st.text_input(f"해야할 일 {i+1}", key=f"new_task_{i}")
             if new_task:
                 st.session_state.tasks.append(new_task)
         
-        if st.button("일정 추가"):
+        if st.button("해야할 일 추가"):
             st.session_state.task_count += 1
             st.experimental_rerun()
 
         if st.button("입력 완료"):
             if st.session_state.tasks:
                 with col2:
-                    with st.spinner('일정을 정리하는 중...'):
+                    with st.spinner('해야할 일을 정리하는 중...'):
                         sorted_tasks, explanation = sort_tasks(st.session_state.tasks)
                         st.session_state.sorted_tasks = sorted_tasks
                         st.session_state.explanation = explanation
                 st.experimental_rerun()
             else:
-                st.warning("최소한 하나의 일정을 입력해주세요.")
+                st.warning("최소한 하나의 해야할 일을 입력해주세요.")
 
     with col2:
         st.header("정리된 일정")
@@ -113,7 +113,7 @@ def sort_tasks(tasks):
         "다음 일정들의 우선순위를 파악해서 리스트화해주세요:\n"
         f"{task_list}\n\n"
         "위 정보를 바탕으로, 목표와 중요도를 고려하여 우선순위가 높은 순서대로 정렬된 일정을 번호를 매기지 않고 리스트로 출력해주세요. "
-        "그 다음, 왜 이런 순서로 일정을 정리했는지 그 이유를 설명해주세요."
+        "그 다음, 왜 이런 순서로 일정을 정리했는지 그 이유를 각 일정마다 설명하는게 아니라 줄글로 설명해주세요."
     )
 
     try:

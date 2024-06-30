@@ -3,6 +3,14 @@ from openai import OpenAI
 
 def main():
     st.set_page_config(page_title="오늘 하루 일정 정리", page_icon="📅", layout="wide")
+    st.markdown("""
+    <style>
+    .stApp {
+        background-color: #2b2b2b;
+        color: #ffffff;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     st.title("오늘 하루 일정 정리")
 
     if 'api_key' not in st.session_state:

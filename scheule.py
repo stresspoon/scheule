@@ -68,7 +68,7 @@ def task_input_page():
     with col1:
         st.header("해야 할 일에 대한 내용을 최대한 구체적으로 입력해주세요")
         st.markdown(
-            "<p style='font-size: 16px; color: yellow;'>예) 블로그 쓰기 X  |  [AI 활용 방법] 무료 특강 모집 블로그 쓰기 O</p>",
+            "<p style='font-size: 16px; color: yellow;'>예) 블로그 쓰기 X <br> [AI 활용 방법] 무료 특강 모집 블로그 쓰기 O</p>",
             unsafe_allow_html=True
         )
         

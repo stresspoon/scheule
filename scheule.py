@@ -1,20 +1,14 @@
 import streamlit as st
 from openai import OpenAI
-import os
 
 def main():
     st.set_page_config(page_title="ChatGPT API 일정 정리 앱", page_icon="📅", layout="wide")
     st.title("ChatGPT API 일정 정리 앱")
 
-    # Streamlit Cloud에서 환경 변수로 API 키 설정
-    if 'OPENAI_API_KEY' not in st.secrets:
-        st.error("OpenAI API 키가 설정되지 않았습니다. Streamlit의 비밀 관리에서 OPENAI_API_KEY를 설정해주세요.")
-        st.stop()
-    
-    openai_api_key = st.secrets['OPENAI_API_KEY']
-
+    if 'api_key' not in st.session_state:
+        st.session_state.api_key = ''
     if 'page' not in st.session_state:
-        st.session_state.page = 'goal_input'
+        st.session_state.page = 'api_key'
     if 'sorted_tasks' not in st.session_state:
         st.session_state.sorted_tasks = None
     if 'tasks' not in st.session_state:
@@ -24,10 +18,23 @@ def main():
     if 'task_count' not in st.session_state:
         st.session_state.task_count = 1
 
-    if st.session_state.page == 'goal_input':
+    if st.session_state.page == 'api_key':
+        api_key_page()
+    elif st.session_state.page == 'goal_input':
         goal_input_page()
     elif st.session_state.page == 'task_input':
-        task_input_page(openai_api_key)
+        task_input_page()
+
+def api_key_page():
+    st.header("API 키 입력")
+    api_key = st.text_input("OpenAI API 키를 입력하세요:", type="password")
+    if st.button("입력 완료"):
+        if api_key:
+            st.session_state.api_key = api_key
+            st.session_state.page = 'goal_input'
+            st.experimental_rerun()
+        else:
+            st.error("API 키를 입력해주세요.")
 
 def goal_input_page():
     st.header("목표 및 중요도 설정")
@@ -40,7 +47,7 @@ def goal_input_page():
         else:
             st.error("목표를 입력해주세요.")
 
-def task_input_page(openai_api_key):
+def task_input_page():
     col1, col2 = st.columns(2)
 
     with col1:
@@ -64,7 +71,7 @@ def task_input_page(openai_api_key):
             if st.session_state.tasks:
                 with col2:
                     with st.spinner('일정을 정리하는 중...'):
-                        sorted_tasks, explanation = sort_tasks(st.session_state.tasks, openai_api_key)
+                        sorted_tasks, explanation = sort_tasks(st.session_state.tasks)
                         st.session_state.sorted_tasks = sorted_tasks
                         st.session_state.explanation = explanation
                 st.experimental_rerun()
@@ -82,8 +89,8 @@ def task_input_page(openai_api_key):
         else:
             st.info("일정을 입력하고 '입력 완료' 버튼을 누르면 이 곳에 정리된 일정이 표시됩니다.")
 
-def sort_tasks(tasks, api_key):
-    client = OpenAI(api_key=api_key)
+def sort_tasks(tasks):
+    client = OpenAI(api_key=st.session_state.api_key)
     task_list = "\n".join(tasks)
     prompt = (
         f"목표: {st.session_state.goal}\n"

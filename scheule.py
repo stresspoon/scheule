@@ -17,6 +17,8 @@ def main():
         st.session_state.explanation = ''
     if 'task_count' not in st.session_state:
         st.session_state.task_count = 1
+    if 'goals' not in st.session_state:
+        st.session_state.goals = []
 
     if st.session_state.page == 'api_key':
         api_key_page()
@@ -38,14 +40,27 @@ def api_key_page():
 
 def goal_input_page():
     st.header("목표 및 중요도 설정")
-    st.session_state.goal = st.text_input("당신의 목표는 무엇인가요?")
+    
+    # 이전에 입력한 목표 선택 옵션
+    if st.session_state.goals:
+        selected_goal = st.selectbox("이전에 입력한 목표 선택:", ["새로운 목표 입력"] + st.session_state.goals)
+        if selected_goal != "새로운 목표 입력":
+            st.session_state.goal = selected_goal
+        else:
+            st.session_state.goal = st.text_input("새로운 목표를 입력하세요:")
+    else:
+        st.session_state.goal = st.text_input("목표를 입력하세요:")
+    
     st.session_state.importance = st.slider("목표의 중요도를 선택하세요", 1, 10, 5)
+    
     if st.button("다음"):
         if st.session_state.goal:
+            if st.session_state.goal not in st.session_state.goals:
+                st.session_state.goals.append(st.session_state.goal)
             st.session_state.page = 'task_input'
             st.experimental_rerun()
         else:
-            st.error("목표를 입력해주세요.")
+            st.error("목표를 입력하거나 선택해주세요.")
 
 def task_input_page():
     col1, col2 = st.columns(2)

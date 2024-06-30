@@ -6,7 +6,7 @@ def main():
     st.markdown("""
     <style>
     .stApp {
-        background-color: #2b2b2b;
+        background-color: #131313;
         color: #ffffff;
     }
     </style>
